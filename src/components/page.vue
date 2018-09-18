@@ -1,0 +1,70 @@
+<template>
+    <div id="page">
+        <div class="page-header">
+            <router-link :to="{name:'supplier'}" tag="div" class="add-supplier">供应商添加</router-link>
+            <router-link :to="{name:'goods'}" tag="div" class="add-goods">商品添加</router-link>
+        </div>
+        <div class="page-content">
+            <div class="page-content-left">
+                <ul class="page-list">
+                    <router-link :to="{name:'purchase'}" tag="li">
+                        <i class="iconfont"></i>
+                        <span class="purchase-title">采购管理</span>
+                    </router-link>
+                </ul>
+            </div>
+            <div class="page-content-right">
+                <router-view></router-view>
+            </div>
+        </div>
+        
+    </div>
+</template>
+<script>
+export default {
+    methods:{
+        
+        
+    }
+}
+</script>
+<style lang="stylus">
+@import '../../static/reset.css'
+#page
+    position relative
+    width 100%
+    height 100%
+    .page-header
+        width 100%
+        height 40px
+        background orange
+        div
+            display inline-block
+            margin-right 20px
+            width 100px
+            height 40px
+            text-align center
+            line-height 40px
+    .page-content
+        position absolute
+        top 40px
+        left 0px
+        bottom 40px
+        width 100%
+        display flex
+        .page-content-left
+            flex 0 0 200px
+            height 100%
+            background rgba(142, 229, 238,.5)
+            .page-list
+                width 100%
+                height 100%
+                li
+                    width 100%
+                    height 30px
+                    line-height 30px
+                    text-align center
+        .page-content-right
+            flex 1
+            height 100%
+</style>
