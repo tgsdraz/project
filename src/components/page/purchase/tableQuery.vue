@@ -32,7 +32,7 @@ export default {
     },
     methods:{
         query(){
-            this.$http.get('/api/query').then((res) => {
+            this.$http.get('/api/query1').then((res) => {
                 this.data = res.body
             })
         }

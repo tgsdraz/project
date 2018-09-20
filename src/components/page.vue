@@ -3,6 +3,9 @@
         <div class="page-header">
             <router-link :to="{name:'supplier'}" tag="div" class="add-supplier">供应商添加</router-link>
             <router-link :to="{name:'goods'}" tag="div" class="add-goods">商品添加</router-link>
+            <router-link :to="{name:'depot'}" tag="div" class="add-depot">仓库添加</router-link>
+            <router-link :to="{name:'executive'}" tag="div" class="add-executive">管理人员添加</router-link>
+            <router-link :to="{name:'department'}" tag="div" class="add-executive">领料部门添加</router-link>
         </div>
         <div class="page-content">
             <div class="page-content-left">
@@ -10,6 +13,10 @@
                     <router-link :to="{name:'purchase'}" tag="li">
                         <i class="iconfont"></i>
                         <span class="purchase-title">采购管理</span>
+                    </router-link>
+                    <router-link :to="{name:'store'}" tag="li">
+                        <i class="iconfont"></i>
+                        <span class="store-title">库存管理</span>
                     </router-link>
                 </ul>
             </div>

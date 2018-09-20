@@ -1,12 +1,12 @@
 <template>
-    <div class="purchase-list">
-        <ul class="purchase-list-content" ref="purchaseListContent">
-            <router-link :to="{name:'purchaseTable'}" tag="li">采购订单</router-link>
-            <router-link :to="{name:'PW'}" tag="li">采购入库</router-link>
-            <router-link :to="{name:'purchaseQuery'}" tag="li">采购订单查询</router-link>
-            <router-link :to="{name:'tableQuery'}" tag="li">采购订单详情</router-link>
+    <div class="store-list">
+        <ul class="store-list-content" ref="storeListContent">
+            <router-link :to="{name:'storeTable'}" tag="li">库存详单</router-link>
+            <router-link :to="{name:'storeOut'}" tag="li">出库单</router-link>
+            <!-- <router-link :to="{name:'storeQuery'}" tag="li">采购订单查询</router-link>
+            <router-link :to="{name:'tableQuery'}" tag="li">采购订单详情</router-link> -->
         </ul>
-        <div class='purchase-list-show'>
+        <div class='store-list-show'>
             <router-view></router-view>
         </div>
     </div>    
@@ -20,11 +20,11 @@ export default {
 </script>
 <style lang="stylus">
 @import '../../../static/reset.css'
-.purchase-list
+.store-list
     position relative
     width 100%
     height 100%
-    .purchase-list-content
+    .store-list-content
         width 100%
         height 30px
         background rgba(219, 219, 219,.3)
@@ -37,7 +37,7 @@ export default {
             text-align center
             line-height 30px
             cursor pointer
-    .purchase-list-show
+    .store-list-show
         position absolute
         top 30px
         bottom 0px

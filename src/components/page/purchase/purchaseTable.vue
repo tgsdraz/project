@@ -1,9 +1,9 @@
 <template>
-    <div class="purchase-table">
+    <div class="purchase-table" ref="purchaseTable">
         <div class="purchase-table-title">
             <h1>采购订单</h1>
         </div>
-        <form @submit.prevent="save" method="post">
+        <!-- <form @submit.prevent="save" method="post"> -->
              <div class="purchase-table-desc">
             <ul>
                 <li class="purchase-desc-item">
@@ -18,13 +18,21 @@
                 <li class="purchase-desc-item">
                     订单日期：<input type="text" :value="date">
                 </li>
-                
+                <li class="purchase-desc-item">
+                    订单号：<input type="text" v-model="purchaseNum">
+                </li>
+                <li class="purchase-desc-item">
+                    订单名称：<input type="text" v-model="purchaseName">
+                </li>
             </ul>
         </div>
         <div class="control-table">
             <button  class="addRow" @click.stop.prevent="addRow">添加行</button>
             <button  class="removeRow"  @click.stop.prevent="removeRow">删除行</button>
-            <input type="submit" value="保存">
+            <button @click.stop.prevent="submit">提交</button>
+            <button @click.stop.prevent="save">保存</button>
+
+            <!-- <input type="submit" value="保存"> -->
         </div>
         <div class="table-list">
             <table border="1" id="table" ref="table">
@@ -61,7 +69,7 @@
                         <input type="text" v-model="item.price">
                     </td>
                     <td>
-                        <input type="text">
+                        <input type="text" :value="`${parseInt(item.number)*parseFloat(item.price)}`">
                     </td>
                 </tr>
             </table>
@@ -86,7 +94,7 @@
                 </table>
             </div>
         </div>
-        </form>
+        <!-- </form> -->
        
     </div>    
 </template>
@@ -101,6 +109,10 @@ export default {
             data:[],
             //供应商初始值
             supplierInit:'',
+            //订单号
+            purchaseNum:'',
+            //订单名称
+            purchaseName:'',
             flag:false,
             rows:[],
             count:0,
@@ -111,6 +123,7 @@ export default {
             //删除行的索引值
             removeIndex:0,
             color:false,
+            
             
         }
     },
@@ -143,7 +156,8 @@ export default {
                 model:'',
                 unit:'',
                 number:0,
-                price:0
+                price:0,
+                // total:parseInt(this.number) * parseFloat(this.price)
             }
             this.rows.push(obj)
             console.log(this.rows)
@@ -163,40 +177,63 @@ export default {
         },
         toSearch($index){
             this.selectIndex = $index
-            console.log(this.selectIndex)
             this.flag1 = !this.flag1
             this.$http.get('/api/search').then((res) => {
                 this.searchResults = res.body
-                console.log(res)
                 // console.log(this.rows)
             })
         },
         selectCur($index){
             this.flag1 = !this.flag1
-            
             this.rows[this.selectIndex].mark = this.searchResults[$index].good_mark
             this.rows[this.selectIndex].name = this.searchResults[$index].good_name
             this.rows[this.selectIndex].model = this.searchResults[$index].good_model
             this.rows[this.selectIndex].unit = this.searchResults[$index].good_unit
-            console.log(this.rows)
         },
-        //提交订单
-        save(){
-            this.$http.post('/api/save',{
+        //提交订单数据
+        submit(){
+            this.$http.post('/api/submit',{
                 supplier:this.supplierInit,
-                rows:this.rows
+                rows:this.rows,
             },{}).then((res) => {
-                
                 if(res.body == 'success'){
                     alert('数据保存成功')
-                    this.rows = []
                 }else if(res.body == '数据更新成功'){
                     alert('数据更新成功')
-                    this.rows = []
                 }else{
                     alert('数据不能为空')
+                }
+                
+            })
+        },
+        //提交订单表
+        save(){
+            this.$http.post('/api/save',{
+                purchaseNum:this.purchaseNum,
+                purchaseName:this.purchaseName,
+                supplier:this.supplierInit,
+                rows:this.rows,
+                flag:'on'
+            },{}).then((res) => {
+                // console.log(res)
+                if(res.body === 'success'){
+                    alert('订单保存成功')
+                                
+                    this.purchaseNum = ''
+                    this.purchaseName =''
+                    this.supplierInit = ''          
                     this.rows = []
                 }
+                // if(res.body == 'success'){
+                //     alert('数据保存成功')
+                //     this.rows = []
+                // }else if(res.body == '数据更新成功'){
+                //     alert('数据更新成功')
+                //     this.rows = []
+                // }else{
+                //     alert('数据不能为空')
+                //     this.rows = []
+                // }
                 
             })
         }
