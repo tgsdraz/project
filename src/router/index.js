@@ -11,6 +11,7 @@ import store from '../components/page/store'
 import purchaseTable from '../components/page/purchase/purchaseTable'
 import storeTable from '../components/page/store/storeTable'
 import storeOut from '../components/page/store/storeOut'
+import storeIn from '../components/page/store/storeIn'
 import tableQuery from '../components/page/purchase/tableQuery'
 import purchaseQuery from '../components/page/purchase/purchaseQuery'
 import PW from '../components/page/purchase/PW'
@@ -108,6 +109,11 @@ export default new Router({
               path:'storeOut',
               name:'storeOut',
               component:storeOut
+            },
+            {
+              path:'storeIn',
+              name:'storeIn',
+              component:storeIn
             }
 
           ]

@@ -296,7 +296,7 @@ router.post('/updateHtml', (req, res) => {
 //采购订单详细数据提交
 router.post('/submit', (req, res) => {
   const supplier = req.body.supplier
-  const rows = req.body.rows
+  let rows = req.body.rows
   pool.getConnection((err, connection) => {
     rows.forEach((item) => {
       connection.query(`select * from table_list where supplier='${supplier}' and good_mark='${item.mark}' and good_name='${item.name}' and good_model='${item.model}' and good_unit='${item.unit}' and good_price='${item.price}'`, (err, result) => {
@@ -356,6 +356,16 @@ router.get('/query3', (req, res) => {
     })
   })
 })
+//获取采购入库单列表
+router.get('/query4', (req, res) => {
+  pool.getConnection((err, connection) => {
+    connection.query(`select * from cg_list`, (err, result) => {
+      console.log(result)
+      res.send(result)
+      connection.release()
+    })
+  })
+})
 //采购入库详细数据
 router.post('/cgTable', (req, res) => {
   const order_number = req.body.order_number
@@ -363,56 +373,70 @@ router.post('/cgTable', (req, res) => {
   const operator = req.body.operator
   rows.forEach((item, index) => {
     pool.getConnection((err, connection) => {
-      console.log(item)
-      connection.query(`select * from cg_list where cgood_mark='${item.mark}' and cgood_name='${item.name}' and cgood_model='${item.model}' and cgood_unit='${item.unit}' and cgood_supplier='${item.supplier}' and order_number='${order_number}' and cgood_operator='${operator}' and cgood_depot='${item.depot}'`, (err, result) => {
-        console.log(result)
-        if (result.length == 0) {
+      // console.log(item)
+      // connection.query(`select * from cg_list where cgood_mark='${item.mark}' and cgood_name='${item.name}' and cgood_model='${item.model}' and cgood_unit='${item.unit}' and cgood_supplier='${item.supplier}' and order_number='${order_number}' and cgood_operator='${operator}' and cgood_depot='${item.depot}'`, (err, result) => {
+      //   console.log(result)
+      //   if (result.length == 0) {
           const total = parseFloat(item.cg_number) * parseFloat(item.cg_price)
-          connection.query(`insert into cg_list(cgood_id,cgood_mark,cgood_name,cgood_model,cgood_unit,cgood_number,cgood_price,cgood_total,cgood_supplier,order_number,cgood_operator,cgood_depot) values(0,'${item.mark}','${item.name}','${item.model}','${item.unit}','${item.cg_number}','${item.cg_price}','${total}','${item.supplier}','${order_number}','${operator}','${item.depot}')`, (err, result) => {
+          connection.query(`insert into cg_list(cgood_id,cgood_mark,cgood_name,cgood_model,cgood_unit,cgood_number,cgood_price,cgood_total,cgood_supplier,order_number,cgood_depot) values(0,'${item.mark}','${item.name}','${item.model}','${item.unit}','${item.cg_number}','${item.cg_price}','${total}','${item.supplier}','${order_number}','${item.depot}')`, (err, result) => {
             if (index == rows.length - 1) {
               res.send('success')
             }
             connection.release()
           })
-        } else {
-          let num = parseFloat(result[0].cgood_number) + parseFloat(item.cg_number)
-          let total = parseFloat(result[0].cgood_total) + parseFloat(item.cg_number) * parseFloat(item.cg_price)
-          let price = (total / num).toFixed(2)
-          console.log(num,total,price)
-          connection.query(`update cg_list set cgood_number='${num}',cgood_price='${price}',cgood_total='${total}' where cgood_mark='${item.mark}' and cgood_name='${item.name}' and cgood_model='${item.model}' and cgood_unit='${item.unit}' and cgood_supplier='${item.supplier}' and order_number='${order_number}' and cgood_operator='${operator}' and cgood_depot='${item.depot}'`, (err, result) => {
-            if (index == rows.length - 1) {
-              res.send('success')
-            }
-            connection.release()
-          })
-        }
-      })
+      //   } else {
+      //     let num = parseFloat(result[0].cgood_number) + parseFloat(item.cg_number)
+      //     let total = parseFloat(result[0].cgood_total) + parseFloat(item.cg_number) * parseFloat(item.cg_price)
+      //     let price = (total / num).toFixed(2)
+      //     console.log(num, total, price)
+      //     connection.query(`update cg_list set cgood_number='${num}',cgood_price='${price}',cgood_total='${total}' where cgood_mark='${item.mark}' and cgood_name='${item.name}' and cgood_model='${item.model}' and cgood_unit='${item.unit}' and cgood_supplier='${item.supplier}' and order_number='${order_number}' and cgood_operator='${operator}' and cgood_depot='${item.depot}'`, (err, result) => {
+      //       if (index == rows.length - 1) {
+      //         res.send('success')
+      //       }
+      //       connection.release()
+      //     })
+      //   }
+      // })
     })
 
   })
 })
 //出库单数据库数据插入
-router.post('/outlist',(req,res) => {
+router.post('/outlist', (req, res) => {
   const id = req.body.id
   const name = req.body.name
   const depart = req.body.depart
   const store = req.body.store
-  store.forEach((item,index) => {
-    pool.getConnection((err,connection) => {
-      connection.query(`insert into out_list(id,ogood_mark,ogood_name,ogood_model,ogood_unit,ogood_number,ogood_depart) values(0,'${item.cgood_mark}','${item.cgood_name}','${item.cgood_model}','${item.cgood_unit}','${item.outNum}','${depart}')`,(err,result)=>{
-        let num = parseFloat(item.cgood_number) - parseFloat(item.outNum)
-        let total = num * parseFloat(item.cgood_price)
-        connection.query(`update cg_list set cgood_number='${num}',cgood_total='${total}' where cgood_mark='${item.cgood_mark}' and cgood_name='${item.cgood_name}' and cgood_model='${item.cgood_model}' and cgood_unit='${item.cgood_unit}' and order_number='${item.order_number}' and cgood_price='${item.cgood_price}' and cgood_supplier='${item.cgood_supplier}'`,(err,result) => {
-          if(index == store.length-1){
-            res.send('success')
-          }
-  
-          connection.release()
-        })
-        
 
+  store.forEach((item, index) => {
+    let ogood_total = parseFloat(item.outNum) * parseFloat(item.cgood_price)
+    if (parseFloat(item.outNum) > 0 && parseFloat(item.outNum) <= parseFloat(item.cgood_number)){
+      pool.getConnection((err, connection) => {
+        connection.query(`insert into out_list(id,ogood_mark,ogood_name,ogood_model,ogood_unit,ogood_number,ogood_total,ogood_depart) values(0,'${item.cgood_mark}','${item.cgood_name}','${item.cgood_model}','${item.cgood_unit}','${item.outNum}','${ogood_total}','${depart}')`, (err, result) => {
+          let num = parseFloat(item.cgood_number) - parseFloat(item.outNum)
+          let total = num * parseFloat(item.cgood_price)
+            connection.query(`update cg_list set cgood_number='${num}',cgood_total='${total}' where cgood_mark='${item.cgood_mark}' and cgood_name='${item.cgood_name}' and cgood_model='${item.cgood_model}' and cgood_unit='${item.cgood_unit}' and order_number='${item.order_number}' and cgood_price='${item.cgood_price}' and cgood_supplier='${item.cgood_supplier}'`, (err, result) => {
+              if (num == 0) {
+                connection.query(`delete from cg_list where cgood_number='${num}'`, (err, result) => {
+                  console.log(result)
+                })
+              }
+              if (index == store.length - 1) {
+                res.send('success')
+              }
+              connection.release()
+            })
+          
+
+        })
       })
-    })
+    } else if(parseFloat(item.outNum)<0){
+      res.send('出库数量必须大于零')
+      connection.release()
+    }else{
+      res.send('fail')
+      connection.release()
+    }
   })
 })
 router.post('/add', (req, res) => {

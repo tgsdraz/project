@@ -158,6 +158,10 @@ export default {
                 this.store_name = ''
                 this.store_department = ''
                 this.storeData = []
+            }else if(res.body == 'fail'){
+                alert('库存溢出')
+            }else{
+                alert('出库数量必须大于0')
             }
         })
     }

@@ -1,7 +1,7 @@
 <template>
     <div id="PW">
         <div class="PW-header">
-            <h1>采购入库单</h1>
+            <h1>入库单</h1>
         </div>
         <form action="" method="post">
             <div class="PW-desc">
@@ -12,7 +12,7 @@
                     <li class="PW-list-item">
                         订单名称：<input type="text" v-model="order_name">
                     </li>
-                    <!-- <li class="PW-list-item">
+                    <li class="PW-list-item">
                         入库时间：<input type="text">
                         
                     </li>
@@ -21,20 +21,20 @@
                         <ul class="operator-list" :class="{showOperater:flag}">
                             <li class="operator" v-for="(item,index) in operatorData" :key="index" @click="selectOwner(index)">{{item.executive_name}}</li>
                         </ul>
-                    </li> -->
+                    </li>
                 </ul>
             </div>
             <div class="PW-operator">
-                <button @click.prevent="toPurchaseList">点击导入采购订单</button>
+                <button @click.prevent="toPurchaseList">点击导入采购入库单</button>
                 <button @click.prevent="toStore">提交</button>
             </div>
             <div class="purchaseList" :class="{showPurchaseList:flag1}">
                 <ul class="purchaseList-content">
                     <li class="purchaseList-item" v-for="(item,index) in purchaseList" :key="index" @click="selectpurchaseItem(index)">
-                        <span>{{item.purchase_num}}</span>
                         <span>{{item.purchase_name}}</span>
-                        <span>{{item.supplier}}</span>
+                        <span>{{item.purchase_num}}</span>
                         <span>{{item.rows}}</span>
+                        <span>{{item.supplier}}</span>
                     </li>
                 </ul>
             </div>
@@ -52,14 +52,10 @@
                     <th class="good-name">商品名称</th>
                     <th class="good-model">商品型号</th>
                     <th class="good-unit">单位</th>
-                    <th class="good-numver">订单数量</th>
-                    <th class="good-price">订单单价</th>
-                    <th class="total-price">订单金额</th>
-                    <th class="good-numver">采购数量</th>
-                    <th class="good-price">采购单价</th>
-                    <th class="total-price">采购金额</th>
+                    <th class="good-numver">入库数量</th>
+                    <th class="good-price">入库单价</th>
+                    <th class="total-price">入库金额</th>
                     <th class="depot">仓库</th>
-                    <th class="supplier">供应商</th>
                 </tr>
                 <tr class="PW-table-item" v-for="(item,index) in rowsInit" :key="index">
                     <td>
@@ -78,29 +74,18 @@
                         <input type="text" :value="item.unit" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.number" readonly>
+                        <input type="text" :value="item._number" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.price" readonly>
+                        <input type="text" :value="item._price" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="`${parseInt(item.number)*parseFloat(item.price)}`" readonly>
-                    </td>
-                     <td>
-                        <input type="text" v-model="item.cg_number">
+                        <input type="text" :value="parseFloat(item._number) * parseFloat(item._price)" readonly>
                     </td>
                     <td>
-                        <input type="text" v-model="item.cg_price">
+                        <input type="text" :value="item.cgood_depot" readonly>
                     </td>
-                    <td>
-                        <input type="text" :value="parseInt(item.cg_number)*parseFloat(item.cg_price)">
-                    </td>
-                    <td>
-                        <input type="text" v-model="item.depot" @click="toDepots(index)">
-                    </td>
-                    <td>
-                        <input type="text" :value="item.supplier">
-                    </td>
+                    
                 </tr>
             </table>
         </form>
@@ -141,19 +126,19 @@ export default {
     };
   },
   methods: {
-    // //点击显示入库人列表
-    // selectOperater() {
-    //   this.flag = !this.flag;
-    //   this.$http.get("/api/operator").then(res => {
-    //     this.operatorData = res.body;
-    //   });
-    // },
-    // //点击选择入库人
-    // selectOwner($index) {
-    //   this.flag = !this.flag;
-    //   this.operatorInit = this.operatorData[$index].executive_name;
-    // },
-    //点击显示采购订单列表
+    //点击显示入库人列表
+    selectOperater() {
+      this.flag = !this.flag;
+      this.$http.get("/api/operator").then(res => {
+        this.operatorData = res.body;
+      });
+    },
+    //点击选择入库人
+    selectOwner($index) {
+      this.flag = !this.flag;
+      this.operatorInit = this.operatorData[$index].executive_name;
+    },
+    // 点击显示采购入库单列表
     toPurchaseList() {
       this.flag1 = !this.flag1;
       this.$http.get("/api/query").then(res => {
@@ -166,14 +151,11 @@ export default {
       this.itemInit = this.purchaseList[$index];
       this.itemInit.rows = JSON.parse(this.itemInit.rows);
       // this.itemInit.rows.push(this.itemInit.supplier)
-      // console.log(this.itemInit)
+      console.log(this.itemInit)
       this.itemInit.rows.forEach(item => {
-        item.supplier = this.itemInit.supplier;
-        item.cg_number = 0;
-        item.cg_price = 0;
-        item.depot = "";
         this.rowsInit.push(item);
       });
+      console.log(this.rowsInit)
       this.itemInit.flag = 'off'
     //   console.log(this.rowsInit);
       this.purchaseList.splice($index, 1);
@@ -221,7 +203,7 @@ export default {
   }
 };
 </script>
-<style lang="stylus">
+<style lang="stylus" scoped>
 #PW {
     position: relative;
     width: 100%;
