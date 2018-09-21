@@ -156,9 +156,9 @@ export default {
         this.rowsInit.push(item);
       });
       console.log(this.rowsInit)
-      this.itemInit.flag = 'off'
+    //   this.itemInit.flag = 'off'
     //   console.log(this.rowsInit);
-      this.purchaseList.splice($index, 1);
+    //   this.purchaseList.splice($index, 1);
       this.$http.post('/api/updateHtml',{
           id:this.itemInit.purchase_num,
           flag:this.itemInit.flag

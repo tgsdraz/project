@@ -187,12 +187,15 @@ export default {
     toStore(){
         this.$http.post('/api/cgTable',{
             // operator:this.operatorInit,
+            order_name:this.order_name,
             order_number:this.order_number,
             rows:this.rowsInit
         },{}).then((res) => {
             if(res.body == 'success'){
                 // this.operatorInit = ''
+                alert('success')
                 this.order_number = ''
+                this.order_name = ''
                 this.rowsInit = []
             }
         },(res) => {

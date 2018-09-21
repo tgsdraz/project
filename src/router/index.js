@@ -15,6 +15,8 @@ import storeIn from '../components/page/store/storeIn'
 import tableQuery from '../components/page/purchase/tableQuery'
 import purchaseQuery from '../components/page/purchase/purchaseQuery'
 import PW from '../components/page/purchase/PW'
+import cgListQuery from '../components/page/purchase/cgListQuery'
+import cgListDetails from '../components/page/purchase/cgListDetails'
 
 import supplier from '../components/page/supplier'
 import goods from '../components/page/goods'
@@ -24,6 +26,8 @@ import department from '../components/page/department'
 import executive from '../components/page/executive'
 
 import table1 from '../components/page/purchase/table1'
+import table2 from '../components/page/purchase/table2'
+
 
 Vue.use(Router)
 
@@ -67,6 +71,11 @@ export default new Router({
               component:purchaseTable
             },
             {
+              path:'cgListDetails',
+              name:'cgListDetails',
+              component:cgListDetails
+            },
+            {
               path:'purchaseQuery',
               name:'purchaseQuery',
               component:purchaseQuery,
@@ -82,6 +91,18 @@ export default new Router({
               path:'tableQuery',
               name:'tableQuery',
               component:tableQuery
+            },
+            {
+              path:'cgListQuery',
+              name:'cgListQuery',
+              component:cgListQuery,
+              children:[
+                {
+                  path:'table2',
+                  name:'table2',
+                  component:table2
+                }
+              ]
             },
             {
               path:'PW',
