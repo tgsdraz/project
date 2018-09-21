@@ -13,7 +13,7 @@
                         订单名称：<input type="text" v-model="order_name">
                     </li>
                     <li class="PW-list-item">
-                        入库时间：<input type="text">
+                        入库时间：<input type="text" v-model="date">
                         
                     </li>
                     <li class="PW-list-item">
@@ -31,10 +31,9 @@
             <div class="purchaseList" :class="{showPurchaseList:flag1}">
                 <ul class="purchaseList-content">
                     <li class="purchaseList-item" v-for="(item,index) in purchaseList" :key="index" @click="selectpurchaseItem(index)">
-                        <span>{{item.purchase_name}}</span>
-                        <span>{{item.purchase_num}}</span>
-                        <span>{{item.rows}}</span>
-                        <span>{{item.supplier}}</span>
+                        <span>{{item.store_name}}</span>
+                        <span>{{item.store_number}}</span>
+                        <span>{{item.store_rows}}</span>
                     </li>
                 </ul>
             </div>
@@ -74,16 +73,16 @@
                         <input type="text" :value="item.unit" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item._number" readonly>
+                        <input type="text" :value="item.cg_number" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item._price" readonly>
+                        <input type="text" :value="item.cg_price" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="`${parseFloat(item._number) * parseFloat(item._price)}`" readonly>
+                        <input type="text" v-model="item.total" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_depot" readonly>
+                        <input type="text" :value="item.depot" readonly>
                     </td>
                     
                 </tr>
@@ -99,6 +98,8 @@ export default {
       order_number:'',
       //订单名称初始值
       order_name:'',
+      //入库时间初始值
+      date:new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate(),
       //入库人数据
       operatorData: [],
       //点击控制operator-list的显示和隐藏
@@ -122,7 +123,9 @@ export default {
       //每个订单里面的rows项
       rowsInit: [],
       //选中的row index
-       selectRowIndex:0
+       selectRowIndex:0,
+      //采购入库单中所有项
+      rows:[]
     };
   },
   methods: {
@@ -141,7 +144,7 @@ export default {
     // 点击显示采购入库单列表
     toPurchaseList() {
       this.flag1 = !this.flag1;
-      this.$http.get("/api/query").then(res => {
+      this.$http.get("/api/query5").then(res => {
         this.purchaseList = res.body;
       });
     },
@@ -149,54 +152,39 @@ export default {
     selectpurchaseItem($index) {
       this.flag1 = !this.flag1;
       this.itemInit = this.purchaseList[$index];
-      this.itemInit.rows = JSON.parse(this.itemInit.rows);
-      // this.itemInit.rows.push(this.itemInit.supplier)
-      console.log(this.itemInit)
-      this.itemInit.rows.forEach(item => {
+      this.itemInit.store_rows = JSON.parse(this.itemInit.store_rows);
+      this.itemInit.store_rows.forEach(item => {
+          item.total = parseFloat(item.cg_number) * parseFloat(item.cg_price)
         this.rowsInit.push(item);
       });
-      console.log(this.rowsInit)
+    
     //   this.itemInit.flag = 'off'
     //   console.log(this.rowsInit);
     //   this.purchaseList.splice($index, 1);
-      this.$http.post('/api/updateHtml',{
-          id:this.itemInit.purchase_num,
-          flag:this.itemInit.flag
-      },{}).then((res) => {
-          console.log(res)
-      })
+    //   this.$http.post('/api/updateInList',{
+    //       id:this.itemInit.store_number,
+    //       flag:this.itemInit.flag
+    //   },{}).then((res) => {
+    //       console.log(res)
+    //   })
     },
     toStore(){
-        this.$http.post('/api/cgTable',{
-            // operator:this.operatorInit,
+        this.$http.post('/api/inStore',{
             order_number:this.order_number,
+            date:this.date,
+            order_name:this.order_name,
+            owner:this.operatorInit,
             rows:this.rowsInit
         },{}).then((res) => {
             if(res.body == 'success'){
                 // this.operatorInit = ''
                 this.order_number = ''
+                this.order_name = ''
                 this.rowsInit = []
             }
         },(res) => {
 
         })
-    },
-    //点击显示仓库列表
-    toDepots($index) {
-      this.selectRowIndex = $index
-      this.flag2 = true
-      this.$http.get('/api/depots').then((res) => {
-          this.DepotList = res.body
-
-      },(res) => {
-
-      })
-    },
-    //选中仓库渲染商品中的仓库值
-    selectDepot($index){
-        console.log(this.selectRowIndex)
-        this.flag2 = false
-        this.rowsInit[this.selectRowIndex].depot = this.DepotList[$index].depot_name
     }
     
 

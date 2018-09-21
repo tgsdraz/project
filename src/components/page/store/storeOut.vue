@@ -35,13 +35,13 @@
                             <th>商品总价</th>
                         </tr>
                         <tr  v-for="(item,index) in storeList" :key="index" @click="selectStoreItem(index)">
-                            <td>{{item.cgood_mark}}</td>
-                            <td>{{item.cgood_name}}</td>
-                            <td>{{item.cgood_model}}</td>
-                            <td>{{item.cgood_unit}}</td>
-                            <td>{{item.cgood_number}}</td>
-                            <td>{{item.cgood_price}}</td>
-                            <td>{{item.cgood_total}}</td>
+                            <td>{{item.i_mark}}</td>
+                            <td>{{item.i_name}}</td>
+                            <td>{{item.i_model}}</td>
+                            <td>{{item.i_unit}}</td>
+                            <td>{{item.i_num}}</td>
+                            <td>{{item.i_price}}</td>
+                            <td>{{item.i_total}}</td>
                         </tr>
                     </table>
             </div>
@@ -62,25 +62,25 @@
                         <input type="button" :value="index" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_mark" readonly>
+                        <input type="text" :value="item.i_mark" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_name" readonly>
+                        <input type="text" :value="item.i_name" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_model" readonly>
+                        <input type="text" :value="item.i_model" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_unit" readonly>
+                        <input type="text" :value="item.i_unit" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_number" readonly>
+                        <input type="text" :value="item.i_num" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_price" readonly>
+                        <input type="text" :value="item.i_price" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="item.cgood_total" readonly>
+                        <input type="text" :value="item.i_total" readonly>
                     </td>
                      <td>
                         <input type="text" v-model="item.outNum">
@@ -110,19 +110,8 @@ export default {
     //点击显示库存列表
     toStoreList() {
       this.flag = true;
-      this.$http.get("/api/query3").then(res => {
-         this.storeList = res.body
-                for(let i = 0; i < this.storeList.length; i++){
-                    for(let j = i+1;j < this.storeList.length; j++){
-                        if(this.storeList[i].cgood_mark == this.storeList[j].cgood_mark && this.storeList[i].cgood_name == this.storeList[j].cgood_name && this.storeList[i].cgood_model == this.storeList[j].cgood_model && this.storeList[i].cgood_unit == this.storeList[j].cgood_unit){
-                            this.storeList[i].cgood_number = parseFloat(this.storeList[i].cgood_number) + parseFloat(this.storeList[j].cgood_number)
-                            this.storeList[i].cgood_total = parseFloat(this.storeList[i].cgood_total) + parseFloat(this.storeList[j].cgood_total)
-                            this.storeList[i].cgood_price = (parseFloat(this.storeList[i].cgood_total)/parseFloat(this.storeList[i].cgood_number)).toFixed(2)
-                            this.storeList.splice(j,1)
-                        }
-                    }
-                }
-                console.log(this.storeList)
+      this.$http.get("/api/query6").then(res => {
+          this.storeList = res.body
       });
     },
     

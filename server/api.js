@@ -293,12 +293,26 @@ router.post('/updateHtml', (req, res) => {
     })
   })
 })
+//更新采购入库单列表
+router.post('/updateInList', (req, res) => {
+  // console.log(req.body)
+  const id = req.body.id
+  const flag = req.body.flag
+  console.log(flag, id)
+  pool.getConnection((err, connection) => {
+    connection.query(`update in_list set flag='${flag}' where store_number='${id}'`, (err, result) => {
+      console.log(result)
+      res.send('success')
+      connection.release()
+    })
+  })
+})
 //采购订单详细数据提交
 router.post('/submit', (req, res) => {
   const supplier = req.body.supplier
   let rows = req.body.rows
+  rows.forEach((item) => {
   pool.getConnection((err, connection) => {
-    rows.forEach((item) => {
       connection.query(`select * from table_list where supplier='${supplier}' and good_mark='${item.mark}' and good_name='${item.name}' and good_model='${item.model}' and good_unit='${item.unit}' and good_price='${item.price}'`, (err, result) => {
         if (result.length == 0) {
           const total = parseInt(item.number) * parseFloat(item.price)
@@ -369,17 +383,24 @@ router.get('/query4', (req, res) => {
 //获取采购入库单列表
 router.get('/query5', (req, res) => {
   pool.getConnection((err, connection) => {
-    connection.query(`select * from in_list`, (err, result) => {
-      console.log(result)
+    connection.query(`select * from in_list where flag='on'`, (err, result) => {
       res.send(result)
       connection.release()
     })
   })
 })
-//获取采购入库单列表
+//获取库存列表
 router.get('/query6', (req, res) => {
   pool.getConnection((err, connection) => {
-    connection.query(`select * from cg_list`, (err, result) => {
+    connection.query(`select * from in_storelist`, (err, result) => {
+      res.send(result)
+      connection.release()
+    })
+  })
+})
+router.get('/query5', (req, res) => {
+  pool.getConnection((err, connection) => {
+    connection.query(`select * from in_list where flag='on'`, (err, result) => {
       res.send(result)
       connection.release()
     })
@@ -399,8 +420,48 @@ router.post('/cgTable', (req, res) => {
         }
       })
     })
-    connection.query(`insert into in_list(store_number,store_name,store_rows,flag) values('${order_number}','${order_number}','${JSON.stringify(rows)}','on')`,(err,result) => {
+    connection.query(`insert into in_list(store_number,store_name,store_rows,flag) values('${order_number}','${order_name}','${JSON.stringify(rows)}','on')`, (err, result) => {
+      console.log(result)
       connection.release()
+    })
+  })
+})
+//入库单详细数据
+router.post('/inStore', (req, res) => {
+  console.log(req.body)
+  const order_number = req.body.order_number
+  const order_name = req.body.order_name
+  const rows = req.body.rows
+  const owner = req.body.owner
+  const date = req.body.date
+
+  console.log(rows)
+  rows.forEach((item, index) => {
+    pool.getConnection((err, connection) => {
+      connection.query(`select * from in_storelist where i_mark='${item.mark}' and i_name='${item.name}' and i_model='${item.model}' and i_unit='${item.unit}'`,(err,result) => {
+        console.log(result)
+        if(result.length == 0){
+          connection.query(`insert into in_storelist(id,i_mark,i_name,i_model,i_unit,i_num,i_price,i_total) values(0,'${item.mark}','${item.name}','${item.model}','${item.unit}','${item.cg_number}','${item.cg_price}','${item.total}')`,(err,result) => {
+            console.log(result)
+            if(index == rows.length - 1){
+              res.send('success')
+  
+            }
+            connection.release()
+          })
+        }else{
+          let num = parseFloat(result[0].i_num) + parseFloat(item.cg_number)
+          let total = parseFloat(result[0].i_total) + parseFloat(item.total)
+          let price = (total / num).toFixed(2)
+          connection.query(`update in_storelist set i_num='${num}',i_price='${price}',i_total='${total}' where i_mark='${item.mark}' and i_name='${item.name}' and i_model='${item.model}' and i_unit='${item.unit}'`,(err,result) => {
+            if(index == rows.length - 1){
+              res.send('success')
+            }
+            connection.release()
+          })
+        }
+      })
+
     })
   })
 })
@@ -412,15 +473,15 @@ router.post('/outlist', (req, res) => {
   const store = req.body.store
 
   store.forEach((item, index) => {
-    let ogood_total = parseFloat(item.outNum) * parseFloat(item.cgood_price)
-    if (parseFloat(item.outNum) > 0 && parseFloat(item.outNum) <= parseFloat(item.cgood_number)) {
+    let ogood_total = parseFloat(item.outNum) * parseFloat(item.i_price)
+    if (parseFloat(item.outNum) > 0 && parseFloat(item.outNum) <= parseFloat(item.i_num)) {
       pool.getConnection((err, connection) => {
-        connection.query(`insert into out_list(id,ogood_mark,ogood_name,ogood_model,ogood_unit,ogood_number,ogood_total,ogood_depart) values(0,'${item.cgood_mark}','${item.cgood_name}','${item.cgood_model}','${item.cgood_unit}','${item.outNum}','${ogood_total}','${depart}')`, (err, result) => {
-          let num = parseFloat(item.cgood_number) - parseFloat(item.outNum)
-          let total = num * parseFloat(item.cgood_price)
-          connection.query(`update cg_list set cgood_number='${num}',cgood_total='${total}' where cgood_mark='${item.cgood_mark}' and cgood_name='${item.cgood_name}' and cgood_model='${item.cgood_model}' and cgood_unit='${item.cgood_unit}' and order_number='${item.order_number}' and cgood_price='${item.cgood_price}' and cgood_supplier='${item.cgood_supplier}'`, (err, result) => {
+        connection.query(`insert into out_list(id,ogood_mark,ogood_name,ogood_model,ogood_unit,ogood_number,ogood_total,ogood_depart) values(0,'${item.i_mark}','${item.i_name}','${item.i_model}','${item.i_unit}','${item.outNum}','${item.i_total}','${depart}')`, (err, result) => {
+          let num = parseFloat(item.i_num) - parseFloat(item.outNum)
+          let total = num * parseFloat(item.i_price)
+          connection.query(`update in_storelist set i_num='${num}',i_total='${total}' where i_mark='${item.i_mark}' and i_name='${item.i_name}' and i_model='${item.i_model}' and i_unit='${item.i_unit}'`, (err, result) => {
             if (num == 0) {
-              connection.query(`delete from cg_list where cgood_number='${num}'`, (err, result) => {
+              connection.query(`delete from in_storelist where i_num='${num}'`, (err, result) => {
                 console.log(result)
               })
             }
@@ -433,7 +494,7 @@ router.post('/outlist', (req, res) => {
 
         })
       })
-    } else if (parseFloat(item.outNum) < 0) {
+    } else if (parseFloat(item.outNum) <= 0) {
       res.send('出库数量必须大于零')
       connection.release()
     } else {
@@ -442,41 +503,5 @@ router.post('/outlist', (req, res) => {
     }
   })
 })
-router.post('/add', (req, res) => {
-  const goods = {
-    good_mark: req.body.good_mark,
-    good_name: req.body.good_name,
-    good_price: req.body.good_price,
-    good_num: req.body.good_num
-  }
 
-  // '${goods.good_name}','${goods.good_price}','${goods.good_mark}'
-  console.log(goods)
-  pool.getConnection((err, connection) => {
-    if (goods.good_mark && goods.good_name && goods.good_num && goods.good_price) {
-      connection.query(`select * from good where good_mark='${goods.good_mark}' and good_name='${goods.good_name}'`, (err, result) => {
-        console.log(result);
-        if (result.length === 0) {
-          connection.query(`insert into good(good_id,good_name,good_price,good_mark,good_num) values(0,'${goods.good_name}','${goods.good_price}','${goods.good_mark}','${goods.good_num}')`, (err, result) => {
-            console.log(result)
-            res.send('添加成功')
-            connection.release()
-          })
-        } else {
-          console.log(typeof result[0].good_num)
-          const num = result[0].good_num + parseInt(goods.good_num)
-          console.log(num)
-          connection.query(`update good set good_num=${num} where good_mark='${goods.good_mark}'`, (err, result) => {
-            console.log(result)
-            res.send('数据更新成功')
-            connection.release()
-          })
-        }
-      })
-    } else {
-      res.send('fail')
-    }
-
-  })
-})
 module.exports = router;

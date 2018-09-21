@@ -38,7 +38,7 @@ export default {
     },
     methods:{
         query(){
-            this.$http.get('/api/query6').then((res) => {
+            this.$http.get('/api/query4').then((res) => {
                 this.data = res.body
                 console.log(this.data)
             })
@@ -70,9 +70,9 @@ export default {
             th
                 text-align center
                 color red
-                font-size 18px
+                font-size 14px
             td
                 text-align center
-                font-size 16px
+                font-size 12px
 
 </style>
