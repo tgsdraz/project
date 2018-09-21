@@ -80,7 +80,7 @@
                         <input type="text" :value="item._price" readonly>
                     </td>
                     <td>
-                        <input type="text" :value="parseFloat(item._number) * parseFloat(item._price)" readonly>
+                        <input type="text" :value="`${parseFloat(item._number) * parseFloat(item._price)}`" readonly>
                     </td>
                     <td>
                         <input type="text" :value="item.cgood_depot" readonly>
