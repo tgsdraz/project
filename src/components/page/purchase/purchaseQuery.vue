@@ -81,10 +81,10 @@ export default {
             th
                 text-align center
                 color red
-                font-size 18px
+                font-size 16px
             td
                 text-align center
-                font-size 16px
+                font-size 12px
         .query-list
             cursor pointer
     .table1
@@ -94,6 +94,7 @@ export default {
         left 0
         top 0
         display none
+        background #ffffff
         &.show
             display block
 </style>

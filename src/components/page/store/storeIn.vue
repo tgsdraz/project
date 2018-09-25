@@ -158,15 +158,15 @@ export default {
         this.rowsInit.push(item);
       });
     
-    //   this.itemInit.flag = 'off'
-    //   console.log(this.rowsInit);
-    //   this.purchaseList.splice($index, 1);
-    //   this.$http.post('/api/updateInList',{
-    //       id:this.itemInit.store_number,
-    //       flag:this.itemInit.flag
-    //   },{}).then((res) => {
-    //       console.log(res)
-    //   })
+      this.itemInit.flag = 'off'
+      console.log(this.rowsInit);
+      this.purchaseList.splice($index, 1);
+      this.$http.post('/api/updateInList',{
+          id:this.itemInit.store_number,
+          flag:this.itemInit.flag
+      },{}).then((res) => {
+          console.log(res)
+      })
     },
     toStore(){
         this.$http.post('/api/inStore',{

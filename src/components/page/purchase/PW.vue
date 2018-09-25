@@ -26,7 +26,9 @@
             </div>
             <div class="PW-operator">
                 <button @click.prevent="toPurchaseList">点击导入采购订单</button>
-                <button @click.prevent="toStore">提交</button>
+                <button @click.prevent="toStore">保存</button>
+                <button @click.prevent="toStoreList">提交</button>
+                (请先保存后提交)
             </div>
             <div class="purchaseList" :class="{showPurchaseList:flag1}">
                 <ul class="purchaseList-content">
@@ -141,19 +143,8 @@ export default {
     };
   },
   methods: {
-    // //点击显示入库人列表
-    // selectOperater() {
-    //   this.flag = !this.flag;
-    //   this.$http.get("/api/operator").then(res => {
-    //     this.operatorData = res.body;
-    //   });
-    // },
-    // //点击选择入库人
-    // selectOwner($index) {
-    //   this.flag = !this.flag;
-    //   this.operatorInit = this.operatorData[$index].executive_name;
-    // },
-    //点击显示采购订单列表
+    
+    // 点击显示采购订单列表
     toPurchaseList() {
       this.flag1 = !this.flag1;
       this.$http.get("/api/query").then(res => {
@@ -165,8 +156,6 @@ export default {
       this.flag1 = !this.flag1;
       this.itemInit = this.purchaseList[$index];
       this.itemInit.rows = JSON.parse(this.itemInit.rows);
-      // this.itemInit.rows.push(this.itemInit.supplier)
-      // console.log(this.itemInit)
       this.itemInit.rows.forEach(item => {
         item.supplier = this.itemInit.supplier;
         item.cg_number = 0;
@@ -175,7 +164,6 @@ export default {
         this.rowsInit.push(item);
       });
       this.itemInit.flag = 'off'
-    //   console.log(this.rowsInit);
       this.purchaseList.splice($index, 1);
       this.$http.post('/api/updateHtml',{
           id:this.itemInit.purchase_num,
@@ -186,14 +174,25 @@ export default {
     },
     toStore(){
         this.$http.post('/api/cgTable',{
-            // operator:this.operatorInit,
             order_name:this.order_name,
             order_number:this.order_number,
             rows:this.rowsInit
         },{}).then((res) => {
             if(res.body == 'success'){
-                // this.operatorInit = ''
-                alert('success')
+                alert('保存成功')
+            }
+        },(res) => {
+
+        })
+    },
+    toStoreList(){
+        this.$http.post('/api/cgTable1',{
+            order_name:this.order_name,
+            order_number:this.order_number,
+            rows:this.rowsInit
+        },{}).then((res) => {
+            if(res.body == 'success'){
+                alert('提交成功')
                 this.order_number = ''
                 this.order_name = ''
                 this.rowsInit = []

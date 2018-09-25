@@ -70,9 +70,9 @@ export default {
         t_data:{
             type:Object
         },
-        flag:{
-            type:Boolean
-        }
+        // flag:{
+        //     type:Boolean
+        // }
     },
     data(){
         return {

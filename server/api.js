@@ -33,6 +33,7 @@ router.get('/get', (req, res) => {
     })
   })
 })
+//登录页面
 router.post('/login', (req, res) => {
   const user = {
     username: req.body.username,
@@ -47,6 +48,7 @@ router.post('/login', (req, res) => {
     })
   })
 })
+//注册页面
 router.post('/regedit', (req, res) => {
   const user = {
     username: req.body.username,
@@ -361,16 +363,16 @@ router.get('/query2', (req, res) => {
     })
   })
 })
-//库存详细信息
+//采购入库单列表
 router.get('/query3', (req, res) => {
   pool.getConnection((err, connection) => {
-    connection.query(`select * from cg_list`, (err, result) => {
+    connection.query(`select * from in_list`, (err, result) => {
       res.send(result)
       connection.release()
     })
   })
 })
-//获取采购入库单列表
+//获取采购入库单详情
 router.get('/query4', (req, res) => {
   pool.getConnection((err, connection) => {
     connection.query(`select * from cg_list`, (err, result) => {
@@ -380,7 +382,7 @@ router.get('/query4', (req, res) => {
     })
   })
 })
-//获取采购入库单列表
+//获取采购入库单列表（flag= on）
 router.get('/query5', (req, res) => {
   pool.getConnection((err, connection) => {
     connection.query(`select * from in_list where flag='on'`, (err, result) => {
@@ -398,15 +400,16 @@ router.get('/query6', (req, res) => {
     })
   })
 })
-router.get('/query5', (req, res) => {
+//获取出库列表
+router.get('/query7', (req, res) => {
   pool.getConnection((err, connection) => {
-    connection.query(`select * from in_list where flag='on'`, (err, result) => {
+    connection.query(`select * from out_list`, (err, result) => {
       res.send(result)
       connection.release()
     })
   })
 })
-//采购入库单详细数据到cg_list   采购入库单 到 in_list
+//采购入库单详细数据到cg_list   
 router.post('/cgTable', (req, res) => {
   const order_number = req.body.order_number
   const order_name = req.body.order_name
@@ -417,11 +420,20 @@ router.post('/cgTable', (req, res) => {
       connection.query(`insert into cg_list(cgood_id,cgood_mark,cgood_name,cgood_model,cgood_unit,cgood_number,cgood_price,cgood_total,cgood_supplier,order_number,cgood_depot) values(0,'${item.mark}','${item.name}','${item.model}','${item.unit}','${item.cg_number}','${item.cg_price}','${total}','${item.supplier}','${order_number}','${item.depot}')`, (err, result) => {
         if (index == rows.length - 1) {
           res.send('success')
+          connection.release()
         }
       })
     })
+  })
+})
+//采购入库单 到 in_list
+router.post('/cgTable1', (req, res) => {
+  const order_number = req.body.order_number
+  const order_name = req.body.order_name
+  const rows = req.body.rows
+  pool.getConnection((err, connection) => {
     connection.query(`insert into in_list(store_number,store_name,store_rows,flag) values('${order_number}','${order_name}','${JSON.stringify(rows)}','on')`, (err, result) => {
-      console.log(result)
+      res.send('success')
       connection.release()
     })
   })

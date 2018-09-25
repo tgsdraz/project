@@ -63,9 +63,9 @@ export default {
             th
                 text-align center
                 color red
-                font-size 18px
+                font-size 16px
             td
                 text-align center
-                font-size 16px
+                font-size 12px
 
 </style>

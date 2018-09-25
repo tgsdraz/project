@@ -7,18 +7,18 @@
                 <th>商品名称</th>
                 <th>商品型号</th>
                 <th>商品单位</th>
-                <th>商品数量</th>
-                <th>商品价格</th>
-                <th>商品总价</th>
+                <th>出库数量</th>
+                <th>出库总价</th>
+                <th>出库单位</th>
             </tr>
             <tr class="query-list" v-for="(item,index) in storeData" :key="index">
-                <td>{{item.i_mark}}</td>
-                <td>{{item.i_name}}</td>
-                <td>{{item.i_model}}</td>
-                <td>{{item.i_unit}}</td>
-                <td>{{item.i_num}}</td>
-                <td>{{item.i_price}}</td>
-                <td>{{item.i_total}}</td>
+                <td>{{item.ogood_mark}}</td>
+                <td>{{item.ogood_name}}</td>
+                <td>{{item.ogood_model}}</td>
+                <td>{{item.ogood_unit}}</td>
+                <td>{{item.ogood_number}}</td>
+                <td>{{item.ogood_total}}</td>
+                <td>{{item.ogood_depart}}</td>
             </tr>
         </table>
         <!-- <table1 :t_data="t_data" :flag="flag" class="table1" :class="{show:flag}"></table1> -->
@@ -39,7 +39,7 @@ export default {
     },
     methods:{
         query3(){
-            this.$http.get('/api/query6').then((res) => {
+            this.$http.get('/api/query7').then((res) => {
                 this.storeData = res.body
             })
         },

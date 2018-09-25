@@ -29,10 +29,9 @@
         <div class="control-table">
             <button  class="addRow" @click.stop.prevent="addRow">添加行</button>
             <button  class="removeRow"  @click.stop.prevent="removeRow">删除行</button>
-            <button @click.stop.prevent="submit">提交</button>
-            <button @click.stop.prevent="save">保存</button>
-
-            <!-- <input type="submit" value="保存"> -->
+            <button @click.stop.prevent="submit">保存</button>
+            <button @click.stop.prevent="save">提交</button>
+            (请先保存后提交)
         </div>
         <div class="table-list">
             <table border="1" id="table" ref="table">
@@ -157,7 +156,6 @@ export default {
                 unit:'',
                 number:0,
                 price:0,
-                // total:parseInt(this.number) * parseFloat(this.price)
             }
             this.rows.push(obj)
             console.log(this.rows)
@@ -224,17 +222,6 @@ export default {
                     this.supplierInit = ''          
                     this.rows = []
                 }
-                // if(res.body == 'success'){
-                //     alert('数据保存成功')
-                //     this.rows = []
-                // }else if(res.body == '数据更新成功'){
-                //     alert('数据更新成功')
-                //     this.rows = []
-                // }else{
-                //     alert('数据不能为空')
-                //     this.rows = []
-                // }
-                
             })
         }
     }
@@ -259,7 +246,6 @@ export default {
             display flex
             flex-wrap wrap
             .purchase-desc-item
-                position relative
                 margin 20px
 
                 input
@@ -268,11 +254,14 @@ export default {
                     background-color transparent  
                 .supplier-list
                     position absolute
-                    top -100px
-                    left 50px
+                    top 50%
+                    left 50%
                     display none
+                    margin-top -150px
+                    margin-left -100px
                     width 200px
                     height 300px
+                    background #ffffff
                     overflow-x scroll
                     background #fff
                     .supplier-list-item
@@ -298,7 +287,6 @@ export default {
             tr
                 width 100%
                 display flex
-                
                 th,td
                     flex 1
                     text-align center
@@ -357,8 +345,4 @@ export default {
                 th
                     font-size 14px
                     color #000
-                        
-
-
-
 </style>

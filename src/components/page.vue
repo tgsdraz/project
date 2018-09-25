@@ -11,11 +11,11 @@
             <div class="page-content-left">
                 <ul class="page-list">
                     <router-link :to="{name:'purchase'}" tag="li">
-                        <i class="iconfont"></i>
+                        <i class="iconfont icon-webicon05"></i>
                         <span class="purchase-title">采购管理</span>
                     </router-link>
                     <router-link :to="{name:'store'}" tag="li">
-                        <i class="iconfont"></i>
+                        <i class="iconfont icon-05_kucunguanli"></i>
                         <span class="store-title">库存管理</span>
                     </router-link>
                 </ul>
@@ -71,6 +71,13 @@ export default {
                     height 30px
                     line-height 30px
                     text-align center
+                    cursor pointer
+                    padding 10px 0
+                li:hover
+                    color #ffffff
+                    background #ff4400
+
+
         .page-content-right
             flex 1
             height 100%

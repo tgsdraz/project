@@ -2,8 +2,10 @@
     <div class="store-list">
         <ul class="store-list-content" ref="storeListContent">
             <router-link :to="{name:'storeIn'}" tag="li">入库单</router-link>
-            <router-link :to="{name:'storeTable'}" tag="li">库存详单</router-link>
             <router-link :to="{name:'storeOut'}" tag="li">出库单</router-link>
+            <router-link :to="{name:'storeTable'}" tag="li">库存详单</router-link>
+            <router-link :to="{name:'outList'}" tag="li">出库详单</router-link>
+
             <!-- <router-link :to="{name:'storeQuery'}" tag="li">采购订单查询</router-link>
             <router-link :to="{name:'tableQuery'}" tag="li">采购订单详情</router-link> -->
         </ul>
