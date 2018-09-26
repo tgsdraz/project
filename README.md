@@ -14,7 +14,8 @@ npm run dev
 #开启服务器
 nodemon app.js
 http://localhost:8080
-账号密码都是admin
+账号密码admin
+或者重新注册也可
 # build for production with minification
 npm run build
 
